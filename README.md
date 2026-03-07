@@ -8,6 +8,7 @@ A Model Context Protocol (MCP) server that provides TypeScript AST (Abstract Syn
 - **TypeScript Analysis**: Uses ts-morph for powerful TypeScript AST parsing and analysis
 - **Reference Finding**: Find all references to a given class method in your codebase
 - **MCP Tool**: Provides a single `find_reference` tool that can be used by MCP clients
+- **TypeScript AST Skill**: Provides a clear instruction on how to search for code references in a project
 
 ## Prerequisites
 
@@ -107,6 +108,21 @@ The server provides a single tool called `find_reference`:
   - `className`: Name of the class
   - `methodName`: Name of the method
 - **Output**: List of file paths with line numbers where the method is referenced
+
+## Installing the typescript-find-references Skill
+
+To install the `typescript-find-references` skill in your repository:
+
+1. **Copy the skill directory**:
+   - Copy the `.claude/skills/typescript-find-references` directory to your project's `.claude/skills/` directory
+
+2. **Configure Claude Code**:
+   - Ensure your `.claude/settings.local.json` file includes the skill in the configuration
+   - The skill should be automatically detected and available when using Claude Code
+
+3. **Verify installation**:
+   - Restart Claude Code
+   - The skill should now be available for use when you ask about TypeScript references
 
 ## License
 

@@ -1,0 +1,34 @@
+{
+  "name": "jsc-typescript-ast-mcp",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol (MCP) server that provides an abstract syntax tree (AST) representation of TypeScript code using the ts-morph library.",
+  "main": "dist/index.js",
+  "scripts": {
+    "format": "prettier --write .",
+    "build": "tsc && chmod 755 dist/index.js",
+    "test:mcp": "npx @modelcontextprotocol/inspector node dist/index.js"
+  },
+  "bin": {
+    "typescript-ast": "./dist/index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.5",
+    "eslint": "^10.0.2",
+    "prettier": "^3.8.1",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "dotenv": "^17.3.1",
+    "ts-morph": "^27.0.2",
+    "zod": "^4.3.6"
+  }
+}

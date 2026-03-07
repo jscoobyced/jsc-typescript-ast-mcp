@@ -59,9 +59,19 @@ To use this MCP server in Claude Code:
    yarn build
    ```
 2. **Configure Claude Code**:
-   - Copy the `.mcp.example.json` to `.mcp.json` (or update your existing one with the content of the MCP configuration)
-   - Start Claude Code
-   - Follow Claude Code instructions to install the MCP in the project or overall for your user
+
+- Copy the `.mcp.example.json` to `.mcp.json` (or update your existing one with the content of the MCP configuration)
+- Edit your `.claude/settings.local.json` and add the MCP section (or the subset needed if you already have some MCPs configured)
+
+```
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "typescript-ast"
+  ]
+```
+
+- Start Claude Code
+- Type the `/mcp` command and check the MCP is connected
 
 ## Development
 

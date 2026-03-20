@@ -38,7 +38,10 @@ yarn --cwd code build
 yarn --cwd code test:mcp
 ```
 
-The server provides a single tool: `find_reference` which takes a file path, class name, and method name as input and returns references to that method.
+The server provides two tools:
+- `find_reference` – finds all references to a given method in a TypeScript class.
+- `find_dependency` – lists all files that import a specified library.
+Both tools use the `typescript-ast` MCP server to analyze the codebase.
 
 ## Dependencies
 

@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { Project } from 'ts-morph'
 import z from 'zod'
-import { createProject } from './project'
+import { createProject } from './project.js'
 
 export const registerFindDependencyTool = (server: McpServer) => {
   server.registerTool(

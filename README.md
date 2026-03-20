@@ -7,7 +7,10 @@ A Model Context Protocol (MCP) server that provides TypeScript AST (Abstract Syn
 - **MCP Server**: Implements the Model Context Protocol for integration with AI assistants
 - **TypeScript Analysis**: Uses ts-morph for powerful TypeScript AST parsing and analysis
 - **Reference Finding**: Find all references to a given class method in your codebase
-- **MCP Tool**: Provides a single `find_reference` tool that can be used by MCP clients
+- **Dependency Finding**: Use the `find_dependency` tool to list all files that import a specified library.
+- The tool is part of the MCP server and can be invoked via Claude Code or other MCP clients.
+
+Also update the features list to include this new tool and adjust any references to “single tool” to “two tools.”
 - **TypeScript AST Skill**: Provides a clear instruction on how to search for code references in a project
 
 ## Prerequisites

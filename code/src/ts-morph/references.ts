@@ -1,10 +1,9 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import * as dotenv from 'dotenv'
 import { Project } from 'ts-morph'
 import { z } from 'zod'
-dotenv.config()
+import { createProject } from './project.js'
 
-export const registerTsMorphTools = (server: McpServer) => {
+export const registerFindReferenceTool = (server: McpServer) => {
   server.registerTool(
     'find_reference',
     {
@@ -28,14 +27,6 @@ export const registerTsMorphTools = (server: McpServer) => {
       }
     },
   )
-}
-
-const createProject = () => {
-  const tsConfigFilePath = process.env.PROJECT_TSCONFIG_PATH || 'tsconfig.json'
-  console.error(`Using tsconfig file at: ${tsConfigFilePath}`)
-  return new Project({
-    tsConfigFilePath,
-  })
 }
 
 const getReferences = (

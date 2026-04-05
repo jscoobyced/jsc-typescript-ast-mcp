@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+import { registerComponentTreeTool } from './ts-morph/componentTree.js'
 import { registerFindDependencyTool } from './ts-morph/dependency.js'
 import { registerFindReferenceTool } from './ts-morph/references.js'
 
@@ -24,6 +25,7 @@ const server = new Proxy(jscServer, {
 
 registerFindReferenceTool(server)
 registerFindDependencyTool(server)
+registerComponentTreeTool(server)
 
 const main = async () => {
   const transport = new StdioServerTransport()

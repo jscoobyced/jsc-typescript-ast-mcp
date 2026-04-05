@@ -1,0 +1,5 @@
+# Ignore all files
+*.*
+
+# Un-ignore specific files that were recently edited
+!src/**/*.ts

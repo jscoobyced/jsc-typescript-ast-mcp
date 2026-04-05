@@ -11,13 +11,18 @@ This is a Model Context Protocol (MCP) server that provides TypeScript AST (Abst
 The project has a simple architecture:
 
 - Main entry point: `code/src/index.ts` - Sets up the MCP server and registers tools
-- Tool implementation: `code/src/ts-morph/index.ts` - Implements the `find_reference` tool using ts-morph
+- Tool implementations:
+  - `code/src/ts-morph/references.ts` - Implements the `find_reference` tool using ts-morph
+  - `code/src/ts-morph/dependency.ts` - Implements the `find_dependency` tool
+  - `code/src/ts-morph/componentTree.ts` - Implements the `component_tree` tool
 - The server is designed to run as an MCP server over stdio
 
 ## Key Files
 
 - `code/src/index.ts`: Main server entry point that initializes the MCP server and registers tools
-- `code/src/ts-morph/index.ts`: Implements the find_reference tool using ts-morph library
+- `code/src/ts-morph/references.ts`: Implements the find_reference tool using ts-morph library
+- `code/src/ts-morph/dependency.ts`: Implements the find_dependency tool
+- `code/src/ts-morph/componentTree.ts`: Implements the component_tree tool
 - `code/tsconfig.json`: TypeScript compilation configuration
 - `code/package.json`: Project metadata and scripts
 - `code/.env.example`: Example environment variables file
@@ -38,10 +43,11 @@ yarn --cwd code build
 yarn --cwd code test:mcp
 ```
 
-The server provides two tools:
+The server provides three tools:
 - `find_reference` – finds all references to a given method in a TypeScript class.
 - `find_dependency` – lists all files that import a specified library.
-Both tools use the `typescript-ast` MCP server to analyze the codebase.
+- `component_tree` – analyzes React component structures in your codebase.
+All tools use the `typescript-ast` MCP server to analyze the codebase.
 
 ## Dependencies
 

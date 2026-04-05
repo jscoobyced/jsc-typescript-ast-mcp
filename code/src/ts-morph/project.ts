@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 import { Project } from 'ts-morph'
-dotenv.config()
+dotenv.config({ quiet: true })
 
 export const createProject = () => {
   const tsConfigFilePath = process.env.PROJECT_TSCONFIG_PATH || 'tsconfig.json'

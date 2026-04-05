@@ -1,6 +1,6 @@
 # TypeScript AST MCP Server
 
-A Model Context Protocol (MCP) server that provides TypeScript AST (Abstract Syntax Tree) analysis capabilities. This server allows you to find references for classes and methods, analyze component trees, and find dependencies in TypeScript code using the ts-morph library.
+A Model Context Protocol (MCP) server that provides TypeScript AST (Abstract Syntax Tree) analysis capabilities. This server allows you to find references for classes and methods, analyze component trees, and find dependencies in TypeScript code using the ts-morph library. Great to represent JSON structure of your React components.
 
 ## Features
 

@@ -5,3 +5,7 @@ dist
 .env
 
 .claude/settings.local.json
+
+code/.mcpregistry*
+code/mcp-publisher
+code/server.json

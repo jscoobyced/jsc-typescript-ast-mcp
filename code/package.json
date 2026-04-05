@@ -1,8 +1,23 @@
 {
   "name": "jsc-typescript-ast-mcp",
-  "version": "1.0.6",
+  "version": "1.0.9",
+  "mcpName": "io.github.jscoobyced/jsc-typescript-ast-mcp",
   "description": "A Model Context Protocol (MCP) server that provides an abstract syntax tree (AST) representation of TypeScript code using the ts-morph library.",
   "main": "dist/index.js",
+    "repository": {
+    "type": "git",
+    "url": "https://github.com/jscoobyced/jsc-typescript-ast-mcp/"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "typescript",
+    "language-server",
+    "ai",
+    "code-intelligence",
+    "ast",
+    "refactoring"
+  ],
   "scripts": {
     "format": "prettier --write .",
     "build": "tsc",

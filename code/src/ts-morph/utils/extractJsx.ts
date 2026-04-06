@@ -89,7 +89,10 @@ const buildNodeFromJsxFragment = (
 ): TreeNode => ({
   name: 'Fragment',
   type: 'fragment',
-  children: extractJSX(node, project, options, depth),
+  children:
+    depth < options.maxDepth
+      ? extractJSX(node, project, options, depth + 1)
+      : [],
 })
 
 export const extractJSX = (
@@ -274,12 +277,12 @@ const buildNodeFromJSX = (
     treeNode.cta = cta
   }
 
-  // Recurse into children
-  if (Node.isJsxElement(node)) {
+  // Recurse into children while under maxDepth.
+  if (Node.isJsxElement(node) && depth < options.maxDepth) {
     const children = node.getJsxChildren()
     children.forEach((child) => {
       if (Node.isJsxElement(child) || Node.isJsxSelfClosingElement(child)) {
-        const childNode = buildNodeFromJSX(child, project, options, depth)
+        const childNode = buildNodeFromJSX(child, project, options, depth + 1)
         if (childNode) {
           treeNode.children.push(childNode)
         }
@@ -288,7 +291,7 @@ const buildNodeFromJSX = (
 
       if (Node.isJsxFragment(child)) {
         treeNode.children.push(
-          buildNodeFromJsxFragment(child, project, options, depth),
+          buildNodeFromJsxFragment(child, project, options, depth + 1),
         )
         return
       }
@@ -297,13 +300,13 @@ const buildNodeFromJSX = (
         const expression = child.getExpression()
         if (expression) {
           treeNode.children.push(
-            ...extractFromExpression(expression, project, options, depth),
+            ...extractFromExpression(expression, project, options, depth + 1),
           )
         }
         return
       }
 
-      treeNode.children.push(...extractJSX(child, project, options, depth))
+      treeNode.children.push(...extractJSX(child, project, options, depth + 1))
     })
   }
 
@@ -321,10 +324,39 @@ const buildNodeFromJSX = (
 }
 
 export const findReturnedJSX = (node: Node): Node | null => {
-  const returnStmt = node.getDescendantsOfKind(SyntaxKind.ReturnStatement)[0]
+  const getReturnedJsxExpression = (expression: Expression): Node | null => {
+    if (Node.isParenthesizedExpression(expression)) {
+      const innerExpression = expression.getExpression()
+      if (!innerExpression) {
+        return null
+      }
 
-  if (returnStmt) {
-    return returnStmt.getExpression() ?? null
+      return getReturnedJsxExpression(innerExpression)
+    }
+
+    if (
+      Node.isJsxElement(expression) ||
+      Node.isJsxSelfClosingElement(expression) ||
+      Node.isJsxFragment(expression)
+    ) {
+      return expression
+    }
+
+    return null
+  }
+
+  const returnStatements = node.getDescendantsOfKind(SyntaxKind.ReturnStatement)
+
+  for (const returnStmt of returnStatements) {
+    const expression = returnStmt.getExpression()
+    if (!expression) {
+      continue
+    }
+
+    const returnedJsxExpression = getReturnedJsxExpression(expression)
+    if (returnedJsxExpression) {
+      return returnedJsxExpression
+    }
   }
 
   // Arrow function implicit return

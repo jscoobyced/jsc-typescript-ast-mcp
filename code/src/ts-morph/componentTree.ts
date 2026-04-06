@@ -39,7 +39,7 @@ export const registerComponentTreeTool = (server: McpServer) => {
   )
 }
 
-const getComponentTree = (
+export const getComponentTree = (
   entryFilePath: string,
   maxDepth: number,
   dataIdAttribute?: string,

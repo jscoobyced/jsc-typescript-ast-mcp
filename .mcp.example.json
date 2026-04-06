@@ -2,8 +2,8 @@
   "mcpServers": {
     "typescript-ast": {
       "type": "stdio",
-      "command": "node",
-      "args": ["YOUR_MCP_PROJECT_PATH/code/dist/index.js"],
+      "command": "yarn",
+      "args": ["typescript-ast"],
       "env": {
         "PROJECT_TSCONFIG_PATH": "YOUR_CODE_PROJECT_PATH/tsconfig.json"
       }

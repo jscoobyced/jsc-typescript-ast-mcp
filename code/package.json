@@ -1,6 +1,6 @@
 {
   "name": "jsc-typescript-ast-mcp",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "mcpName": "io.github.jscoobyced/jsc-typescript-ast-mcp",
   "description": "A Model Context Protocol (MCP) server that provides an abstract syntax tree (AST) representation of TypeScript code using the ts-morph library. It allows clients to analyze and manipulate TypeScript code structures, making it easier for AI models to understand and work with TypeScript projects. You can create a JSON representation of your React components, and use it for various purposes such as documentation, code analysis, or even generating new code based on existing components.",
   "main": "dist/index.js",

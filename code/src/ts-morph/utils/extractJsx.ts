@@ -12,7 +12,11 @@ import {
 import { analyzeComponent } from './analyzeComponent.js'
 import { getComponent } from './component.js'
 import { getTagName } from './nameHelper.js'
-import { extractOnClickInfoFromNode, extractPropsFromNode } from './props.js'
+import {
+  extractAttributeValueFromNode,
+  extractOnClickInfoFromNode,
+  extractPropsFromNode,
+} from './props.js'
 import { handleTernary } from './ternary.js'
 import { AnalyzeOptions, TreeNode } from './types.js'
 
@@ -250,15 +254,18 @@ const buildNodeFromJSX = (
     }
   }
 
-  const props = extractPropsFromNode(node)
+  const props = extractPropsFromNode(node, options.dataIdAttribute)
   if (props) {
     treeNode.props = props
+  }
 
-    if (options.dataIdAttribute && options.dataIdAttribute in props) {
-      const dataIdValue = props[options.dataIdAttribute]
-      if (dataIdValue !== undefined && dataIdValue !== null) {
-        treeNode.dataId = String(dataIdValue)
-      }
+  if (options.dataIdAttribute) {
+    const dataIdValue = extractAttributeValueFromNode(
+      node,
+      options.dataIdAttribute,
+    )
+    if (dataIdValue !== undefined && dataIdValue !== null) {
+      treeNode.dataId = String(dataIdValue)
     }
   }
 

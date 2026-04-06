@@ -1,19 +1,70 @@
-import { SourceFile, SyntaxKind } from 'ts-morph'
-import { getComponentName } from './nameHelper.js'
+import { Node, SourceFile, SyntaxKind } from 'ts-morph'
 
-export const getComponent = (sourceFile: SourceFile) => {
-  const component = sourceFile.getDefaultExportSymbol()?.getDeclarations()?.[0]
-
-  if (!component) {
-    throw new Error(`Component not found in ${sourceFile.getFilePath()}`)
+const isComponentVariableDeclaration = (node: Node): boolean => {
+  if (!Node.isVariableDeclaration(node)) {
+    return false
   }
 
-  const componentName = getComponentName(component)
-  if (componentName !== 'AnonymousComponent') return component
-  const components = sourceFile.getVariableDeclarations().filter((v) => {
-    const initializer = v.getInitializer()
-    return initializer?.getKind() === SyntaxKind.ArrowFunction
-  })
+  const initializer = node.getInitializer()
+  if (!initializer) {
+    return false
+  }
 
-  return components[0]
+  return (
+    initializer.getKind() === SyntaxKind.ArrowFunction ||
+    initializer.getKind() === SyntaxKind.FunctionExpression
+  )
+}
+
+const isComponentDeclaration = (node: Node): boolean => {
+  if (Node.isFunctionDeclaration(node)) {
+    return true
+  }
+
+  return isComponentVariableDeclaration(node)
+}
+
+const getFirstExportedComponent = (
+  sourceFile: SourceFile,
+): Node | undefined => {
+  const exportedDeclarations = sourceFile.getExportedDeclarations()
+
+  for (const declarations of exportedDeclarations.values()) {
+    const componentDeclaration = declarations.find(isComponentDeclaration)
+    if (componentDeclaration) {
+      return componentDeclaration
+    }
+  }
+
+  return undefined
+}
+
+export const getComponent = (sourceFile: SourceFile) => {
+  const defaultExportDeclaration = sourceFile
+    .getDefaultExportSymbol()
+    ?.getDeclarations()
+    ?.find(isComponentDeclaration)
+
+  if (defaultExportDeclaration) {
+    return defaultExportDeclaration
+  }
+
+  const firstExportedComponent = getFirstExportedComponent(sourceFile)
+  if (firstExportedComponent) {
+    return firstExportedComponent
+  }
+
+  const localVariableComponent = sourceFile
+    .getVariableDeclarations()
+    .find(isComponentVariableDeclaration)
+  if (localVariableComponent) {
+    return localVariableComponent
+  }
+
+  const localFunctionComponent = sourceFile.getFunctions()[0]
+  if (localFunctionComponent) {
+    return localFunctionComponent
+  }
+
+  throw new Error(`Component not found in ${sourceFile.getFilePath()}`)
 }

@@ -155,20 +155,76 @@ const resolveComponentFile = (
 
     if (defaultImport?.getText() === tagName) {
       const file = imp.getModuleSpecifierSourceFile()
-      const component = getComponent(file!)
-      return component ?? null
+      if (!file || file.getFilePath().includes('/node_modules/')) {
+        return null
+      }
+
+      try {
+        const component = getComponent(file)
+        return component ?? null
+      } catch {
+        return null
+      }
     }
 
     for (const n of named) {
       if (n.getName() === tagName) {
         const file = imp.getModuleSpecifierSourceFile()
-        const component = getComponent(file!)
-        return component ?? null
+        if (!file || file.getFilePath().includes('/node_modules/')) {
+          return null
+        }
+
+        try {
+          const component = getComponent(file)
+          return component ?? null
+        } catch {
+          return null
+        }
       }
     }
   }
 
   return null
+}
+
+const resolveLocalComponentFilePath = (
+  node: JsxElement | JsxSelfClosingElement,
+): string | undefined => {
+  const tagName = getTagName(node)
+  const sourceFile = node.getSourceFile()
+
+  for (const imp of sourceFile.getImportDeclarations()) {
+    const matchesDefaultImport = imp.getDefaultImport()?.getText() === tagName
+    const matchesNamedImport = imp
+      .getNamedImports()
+      .some((namedImport) => namedImport.getName() === tagName)
+
+    if (!matchesDefaultImport && !matchesNamedImport) {
+      continue
+    }
+
+    const moduleSpecifier = imp.getModuleSpecifierValue()
+    const isLocalImport =
+      moduleSpecifier.startsWith('.') || moduleSpecifier.startsWith('/')
+    if (!isLocalImport) {
+      return undefined
+    }
+
+    const importedSourceFile = imp.getModuleSpecifierSourceFile()
+    if (!importedSourceFile) {
+      return undefined
+    }
+
+    const importedFilePath = importedSourceFile.getFilePath()
+    if (importedFilePath.includes('/node_modules/')) {
+      return undefined
+    }
+
+    return importedFilePath
+  }
+
+  // If there is no matching import, treat it as a component from the current local source file.
+  return sourceFile.getFilePath()
 }
 
 const buildNodeFromJSX = (
@@ -188,7 +244,10 @@ const buildNodeFromJSX = (
   }
 
   if (!isHtml) {
-    treeNode.filePath = node.getSourceFile().getFilePath()
+    const localComponentFilePath = resolveLocalComponentFilePath(node)
+    if (localComponentFilePath) {
+      treeNode.filePath = localComponentFilePath
+    }
   }
 
   const props = extractPropsFromNode(node)

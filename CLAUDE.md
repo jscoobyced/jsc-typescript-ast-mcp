@@ -23,6 +23,9 @@ The project has a simple architecture:
 - `code/src/ts-morph/references.ts`: Implements the find_reference tool using ts-morph library
 - `code/src/ts-morph/dependency.ts`: Implements the find_dependency tool
 - `code/src/ts-morph/componentTree.ts`: Implements the component_tree tool
+- `code/src/ts-morph/utils/extractJsx.ts`: Utility for extracting JSX information including onClick handlers
+- `code/src/ts-morph/utils/props.ts`: Utility for extracting props and onClick information
+- `code/src/ts-morph/utils/types.ts`: Type definitions including TreeNode and OnClickInfo
 - `code/tsconfig.json`: TypeScript compilation configuration
 - `code/package.json`: Project metadata and scripts
 - `code/.env.example`: Example environment variables file

@@ -17,6 +17,7 @@ export const analyzeComponent = (
     name,
     type: 'component',
     children: [],
+    filePath: node.getSourceFile().getFilePath(),
   }
 
   if (currentDepth >= options.maxDepth) {

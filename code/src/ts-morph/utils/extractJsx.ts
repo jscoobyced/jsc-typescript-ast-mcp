@@ -12,10 +12,11 @@ import {
 import { analyzeComponent } from './analyzeComponent.js'
 import { getComponent } from './component.js'
 import { getTagName } from './nameHelper.js'
+import { extractPropsFromNode } from './props.js'
 import { handleTernary } from './ternary.js'
 import { AnalyzeOptions, TreeNode } from './types.js'
 
-const extractFromExpression = (
+export const extractFromExpression = (
   expression: Expression,
   project: Project,
   options: AnalyzeOptions,
@@ -36,7 +37,7 @@ const extractFromExpression = (
   return extractJSX(expression, project, options, depth)
 }
 
-const handleLogicalAnd = (
+export const handleLogicalAnd = (
   expression: BinaryExpression,
   project: Project,
   options: AnalyzeOptions,
@@ -170,12 +171,12 @@ const resolveComponentFile = (
   return null
 }
 
-function buildNodeFromJSX(
+const buildNodeFromJSX = (
   node: JsxElement | JsxSelfClosingElement,
   project: Project,
   options: AnalyzeOptions,
   depth: number,
-): TreeNode | null {
+): TreeNode | null => {
   const tagName = getTagName(node)
 
   const isHtml = tagName[0] === tagName[0].toLowerCase()
@@ -184,6 +185,15 @@ function buildNodeFromJSX(
     name: tagName,
     type: isHtml ? 'html' : 'component',
     children: [],
+  }
+
+  if (!isHtml) {
+    treeNode.filePath = node.getSourceFile().getFilePath()
+  }
+
+  const props = extractPropsFromNode(node)
+  if (props) {
+    treeNode.props = props
   }
 
   // Recurse into children
@@ -223,6 +233,7 @@ function buildNodeFromJSX(
   if (!isHtml && depth < options.maxDepth) {
     const resolved = resolveComponentFile(node)
     if (resolved) {
+      treeNode.filePath = resolved.getSourceFile().getFilePath()
       const subTree = analyzeComponent(resolved, project, options, depth)
       treeNode.children.push(...subTree.children)
     }

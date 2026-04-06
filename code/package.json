@@ -21,6 +21,7 @@
   "scripts": {
     "format": "prettier --write .",
     "build": "tsc",
+    "lint": "eslint . --ext .ts",
     "test:mcp": "npx @modelcontextprotocol/inspector node dist/index.js"
   },
   "bin": {

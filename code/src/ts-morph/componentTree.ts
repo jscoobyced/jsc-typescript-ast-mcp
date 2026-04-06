@@ -17,10 +17,16 @@ export const registerComponentTreeTool = (server: McpServer) => {
           .number()
           .default(3)
           .describe('Maximum depth of the component tree (default: 3)'),
+        'data-id': z
+          .string()
+          .optional()
+          .describe(
+            'Optional attribute name to capture as TreeNode.dataId (example: data-attribute-id)',
+          ),
       },
     },
-    async ({ entryFilePath, maxDepth }) => {
-      const tree = getComponentTree(entryFilePath, maxDepth)
+    async ({ entryFilePath, maxDepth, ['data-id']: dataIdAttribute }) => {
+      const tree = getComponentTree(entryFilePath, maxDepth, dataIdAttribute)
       return {
         content: [
           {
@@ -36,6 +42,7 @@ export const registerComponentTreeTool = (server: McpServer) => {
 const getComponentTree = (
   entryFilePath: string,
   maxDepth: number,
+  dataIdAttribute?: string,
 ): TreeNode | null => {
   const project = createProject()
   const sourceFile = project.getSourceFile(entryFilePath)
@@ -50,6 +57,7 @@ const getComponentTree = (
     project,
     {
       maxDepth,
+      dataIdAttribute,
     },
     0,
   )

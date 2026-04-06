@@ -96,6 +96,7 @@ Analyze React component structures in your codebase.
 - **Input**:
   - `entryFilePath`: Path to the entry file
   - `maxDepth`: Maximum depth of the component tree (default: 3)
+  - `data-id` (optional): Attribute name to capture into `TreeNode.dataId` (example: `data-attribute-id`)
 - **Output**: JSON representation of the component tree structure
 
 ## License

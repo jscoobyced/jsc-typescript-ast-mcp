@@ -194,6 +194,13 @@ const buildNodeFromJSX = (
   const props = extractPropsFromNode(node)
   if (props) {
     treeNode.props = props
+
+    if (options.dataIdAttribute && options.dataIdAttribute in props) {
+      const dataIdValue = props[options.dataIdAttribute]
+      if (dataIdValue !== undefined && dataIdValue !== null) {
+        treeNode.dataId = String(dataIdValue)
+      }
+    }
   }
 
   // Recurse into children

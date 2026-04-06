@@ -9,10 +9,12 @@ export type TreeNode = {
   condition?: Condition
   props?: ReactComponentProps
   filePath?: string
+  dataId?: string
 }
 
 export type AnalyzeOptions = {
   maxDepth: number
+  dataIdAttribute?: string
 }
 
 export type ReactComponentProps<

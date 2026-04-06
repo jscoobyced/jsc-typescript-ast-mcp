@@ -8,7 +8,7 @@ export type TreeNode = {
   children: TreeNode[]
   condition?: Condition
   props?: ReactComponentProps
-  onClick?: OnClickInfo
+  cta?: CtaInfo
   filePath?: string
   dataId?: string
 }
@@ -22,8 +22,8 @@ export type ReactComponentProps<
   TProps extends Record<string, unknown> = Record<string, unknown>,
 > = TProps
 
-export type OnClickInfo = {
-  attribute: 'onClick'
+export type CtaInfo = {
+  attribute: string
   expression: string
   kind:
     | 'identifier'

@@ -6,15 +6,15 @@ import {
   JsxSpreadAttribute,
   Node,
 } from 'ts-morph'
-import { OnClickInfo, ReactComponentProps } from './types.js'
+import { CtaInfo, ReactComponentProps } from './types.js'
 
-const STANDARD_HTML_ATTRIBUTES = new Set([
+const EXCLUDE_HTML_ATTRIBUTES = new Set([
   'accept',
   'acceptcharset',
-  'action',
+  //  'action',
   'allow',
   'allowfullscreen',
-  'alt',
+  //  'alt',
   'as',
   'async',
   'autocapitalize',
@@ -27,30 +27,30 @@ const STANDARD_HTML_ATTRIBUTES = new Set([
   'cellspacing',
   'charset',
   'challenge',
-  'checked',
+  //  'checked',
   'cite',
   'class',
   'classname',
   'cols',
   'colspan',
-  'content',
+  //  'content',
   'contenteditable',
   'controls',
   'coords',
   'crossorigin',
-  'data',
-  'datetime',
+  //  'data',
+  //  'datetime',
   'decoding',
   'default',
   'defer',
   'dir',
   'dirname',
-  'disabled',
+  //  'disabled',
   'download',
   'draggable',
   'enctype',
   'fetchpriority',
-  'for',
+  //  'for',
   'form',
   'formaction',
   'formenctype',
@@ -59,20 +59,20 @@ const STANDARD_HTML_ATTRIBUTES = new Set([
   'formtarget',
   'frameborder',
   'headers',
-  'height',
-  'hidden',
+  //  'height',
+  //  'hidden',
   'high',
   'href',
   'hreflang',
   'htmlfor',
   'httpequiv',
-  'id',
+  //  'id',
   'inputmode',
   'integrity',
   'is',
-  'key',
+  //  'key',
   'kind',
-  'label',
+  //  'label',
   'lang',
   'list',
   'loading',
@@ -86,23 +86,23 @@ const STANDARD_HTML_ATTRIBUTES = new Set([
   'minlength',
   'multiple',
   'muted',
-  'name',
+  //  'name',
   'nomodule',
   'nonce',
   'novalidate',
   'open',
   'optimum',
   'pattern',
-  'placeholder',
+  //  'placeholder',
   'playsinline',
   'poster',
   'preload',
-  'readonly',
+  //  'readonly',
   'referrerpolicy',
-  'rel',
+  //  'rel',
   'required',
   'reversed',
-  'role',
+  //  'role',
   'rows',
   'rowspan',
   'sandbox',
@@ -123,12 +123,12 @@ const STANDARD_HTML_ATTRIBUTES = new Set([
   'style',
   'tabindex',
   'target',
-  'title',
+  //  'title',
   'translate',
   'type',
   'usemap',
-  'value',
-  'width',
+  //  'value',
+  //  'width',
   'wrap',
   // Common DOM event handler props
   'onabort',
@@ -214,18 +214,32 @@ const STANDARD_HTML_ATTRIBUTES = new Set([
   'onwheel',
 ])
 
+const CTA_EVENTS = new Set([
+  'onClick',
+  'onChange',
+  'onInput',
+  'onSubmit',
+  'onSelect',
+  'onKeyDown',
+  'onKeyUp',
+  'onBlur',
+])
+
 const isStandardHtmlAttribute = (name: string): boolean => {
   const normalizedName = name.toLowerCase()
 
-  if (
-    normalizedName.startsWith('aria-') ||
-    normalizedName.startsWith('data-')
-  ) {
+  if (normalizedName.startsWith('aria-')) {
     return true
   }
 
-  return STANDARD_HTML_ATTRIBUTES.has(normalizedName)
+  return EXCLUDE_HTML_ATTRIBUTES.has(normalizedName)
 }
+
+const normalizeAttributeName = (name: string): string =>
+  name.replace(/[-_]/g, '').toLowerCase()
+
+const matchesAttributeName = (name: string, target: string): boolean =>
+  normalizeAttributeName(name) === normalizeAttributeName(target)
 
 const extractPropValue = (attribute: JsxAttribute): unknown => {
   const initializer = attribute.getInitializer()
@@ -279,7 +293,7 @@ export const extractPropsFromNode = (
       const attributeName = attribute.getNameNode().getText()
       const isExcludedDataIdAttribute =
         excludedAttributeName !== undefined &&
-        attributeName.toLowerCase() === excludedAttributeName.toLowerCase()
+        matchesAttributeName(attributeName, excludedAttributeName)
 
       if (isStandardHtmlAttribute(attributeName) || isExcludedDataIdAttribute) {
         continue
@@ -312,7 +326,7 @@ export const extractAttributeValueFromNode = (
   const matchedAttribute = attributes.find(
     (attribute) =>
       Node.isJsxAttribute(attribute) &&
-      attribute.getNameNode().getText() === attributeName,
+      matchesAttributeName(attribute.getNameNode().getText(), attributeName),
   )
 
   if (!matchedAttribute || !Node.isJsxAttribute(matchedAttribute)) {
@@ -322,7 +336,7 @@ export const extractAttributeValueFromNode = (
   return extractPropValue(matchedAttribute)
 }
 
-const getExpressionKind = (expression: Expression): OnClickInfo['kind'] => {
+const getExpressionKind = (expression: Expression): CtaInfo['kind'] => {
   if (Node.isIdentifier(expression)) {
     return 'identifier'
   }
@@ -346,27 +360,29 @@ const getExpressionKind = (expression: Expression): OnClickInfo['kind'] => {
   return 'expression'
 }
 
-export const extractOnClickInfoFromNode = (
+export const extractCtaInfoFromNode = (
   node: JsxElement | JsxSelfClosingElement,
-): OnClickInfo | undefined => {
+): CtaInfo | undefined => {
   const attributes = Node.isJsxElement(node)
     ? node.getOpeningElement().getAttributes()
     : node.getAttributes()
 
-  const onClickAttribute = attributes.find(
+  const ctaAttribute = attributes.find(
     (attribute) =>
       Node.isJsxAttribute(attribute) &&
-      attribute.getNameNode().getText() === 'onClick',
+      CTA_EVENTS.has(attribute.getNameNode().getText()),
   )
 
-  if (!onClickAttribute || !Node.isJsxAttribute(onClickAttribute)) {
+  if (!ctaAttribute || !Node.isJsxAttribute(ctaAttribute)) {
     return undefined
   }
 
-  const initializer = onClickAttribute.getInitializer()
+  const eventAttributeName = ctaAttribute.getNameNode().getText()
+
+  const initializer = ctaAttribute.getInitializer()
   if (!initializer) {
     return {
-      attribute: 'onClick',
+      attribute: eventAttributeName,
       expression: 'true',
       kind: 'boolean-shorthand',
     }
@@ -374,7 +390,7 @@ export const extractOnClickInfoFromNode = (
 
   if (Node.isStringLiteral(initializer)) {
     return {
-      attribute: 'onClick',
+      attribute: eventAttributeName,
       expression: initializer.getLiteralText(),
       kind: 'string-literal',
     }
@@ -387,14 +403,14 @@ export const extractOnClickInfoFromNode = (
     }
 
     return {
-      attribute: 'onClick',
+      attribute: eventAttributeName,
       expression: expression.getText(),
       kind: getExpressionKind(expression),
     }
   }
 
   return {
-    attribute: 'onClick',
+    attribute: eventAttributeName,
     expression: initializer.getText(),
     kind: 'expression',
   }

@@ -14,7 +14,7 @@ import { getComponent } from './component.js'
 import { getTagName } from './nameHelper.js'
 import {
   extractAttributeValueFromNode,
-  extractOnClickInfoFromNode,
+  extractCtaInfoFromNode,
   extractPropsFromNode,
 } from './props.js'
 import { handleTernary } from './ternary.js'
@@ -269,9 +269,9 @@ const buildNodeFromJSX = (
     }
   }
 
-  const onClick = extractOnClickInfoFromNode(node)
-  if (onClick) {
-    treeNode.onClick = onClick
+  const cta = extractCtaInfoFromNode(node)
+  if (cta) {
+    treeNode.cta = cta
   }
 
   // Recurse into children

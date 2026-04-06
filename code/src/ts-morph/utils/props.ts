@@ -1,11 +1,12 @@
 import {
+  Expression,
   JsxAttribute,
   JsxElement,
   JsxSelfClosingElement,
   JsxSpreadAttribute,
   Node,
 } from 'ts-morph'
-import { ReactComponentProps } from './types.js'
+import { OnClickInfo, ReactComponentProps } from './types.js'
 
 const extractPropValue = (attribute: JsxAttribute): unknown => {
   const initializer = attribute.getInitializer()
@@ -69,4 +70,82 @@ export const extractPropsFromNode = (
   }
 
   return props
+}
+
+const getExpressionKind = (expression: Expression): OnClickInfo['kind'] => {
+  if (Node.isIdentifier(expression)) {
+    return 'identifier'
+  }
+
+  if (Node.isPropertyAccessExpression(expression)) {
+    return 'member-expression'
+  }
+
+  if (Node.isCallExpression(expression)) {
+    return 'call-expression'
+  }
+
+  if (Node.isArrowFunction(expression)) {
+    return 'arrow-function'
+  }
+
+  if (Node.isFunctionExpression(expression)) {
+    return 'function-expression'
+  }
+
+  return 'expression'
+}
+
+export const extractOnClickInfoFromNode = (
+  node: JsxElement | JsxSelfClosingElement,
+): OnClickInfo | undefined => {
+  const attributes = Node.isJsxElement(node)
+    ? node.getOpeningElement().getAttributes()
+    : node.getAttributes()
+
+  const onClickAttribute = attributes.find(
+    (attribute) =>
+      Node.isJsxAttribute(attribute) &&
+      attribute.getNameNode().getText() === 'onClick',
+  )
+
+  if (!onClickAttribute || !Node.isJsxAttribute(onClickAttribute)) {
+    return undefined
+  }
+
+  const initializer = onClickAttribute.getInitializer()
+  if (!initializer) {
+    return {
+      attribute: 'onClick',
+      expression: 'true',
+      kind: 'boolean-shorthand',
+    }
+  }
+
+  if (Node.isStringLiteral(initializer)) {
+    return {
+      attribute: 'onClick',
+      expression: initializer.getLiteralText(),
+      kind: 'string-literal',
+    }
+  }
+
+  if (Node.isJsxExpression(initializer)) {
+    const expression = initializer.getExpression()
+    if (!expression) {
+      return undefined
+    }
+
+    return {
+      attribute: 'onClick',
+      expression: expression.getText(),
+      kind: getExpressionKind(expression),
+    }
+  }
+
+  return {
+    attribute: 'onClick',
+    expression: initializer.getText(),
+    kind: 'expression',
+  }
 }

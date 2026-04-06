@@ -12,7 +12,7 @@ import {
 import { analyzeComponent } from './analyzeComponent.js'
 import { getComponent } from './component.js'
 import { getTagName } from './nameHelper.js'
-import { extractPropsFromNode } from './props.js'
+import { extractOnClickInfoFromNode, extractPropsFromNode } from './props.js'
 import { handleTernary } from './ternary.js'
 import { AnalyzeOptions, TreeNode } from './types.js'
 
@@ -260,6 +260,11 @@ const buildNodeFromJSX = (
         treeNode.dataId = String(dataIdValue)
       }
     }
+  }
+
+  const onClick = extractOnClickInfoFromNode(node)
+  if (onClick) {
+    treeNode.onClick = onClick
   }
 
   // Recurse into children

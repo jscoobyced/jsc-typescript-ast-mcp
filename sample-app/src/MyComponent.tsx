@@ -1,6 +1,6 @@
 import { MyContent } from "./MyContent";
 
-const MyComponent = ({ title }) => {
+const MyComponent = ({ title }: { title: string }) => {
   const titleContent = (
     <h1
       style={{

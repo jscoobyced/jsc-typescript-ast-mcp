@@ -50,7 +50,7 @@ To use this MCP server in Claude Code:
         "typescript-ast"
       ],
       "env": {
-        "PROJECT_TSCONFIG_PATH": "PATH/TO/YOUR/TYPESCRIPT?PROJECT/tsconfig.json"
+        "PROJECT_TSCONFIG_PATH": "PATH/TO/YOUR/TYPESCRIPT/PROJECT/tsconfig.json"
       }
     }
   }

@@ -1,7 +1,15 @@
+import path from 'path'
 import { getComponentTree } from './ts-morph/componentTree.js'
 
+const rootDir =
+  __dirname === 'dist'
+    ? path.resolve(__dirname, '../../')
+    : __dirname === 'code'
+      ? path.resolve(__dirname, '../')
+      : __dirname
+
 const testApp = getComponentTree(
-  '/home/cedric/workspaces/jsc-typescript-ast-mcp/sample-app/src/App.tsx',
+  path.resolve(rootDir, 'sample-app/src/App.tsx'),
   5,
   'my-data-id',
 )

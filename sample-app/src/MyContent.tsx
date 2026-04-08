@@ -1,4 +1,10 @@
-export const MyContent = ({ contentText, includeButton = false }) => {
+export const MyContent = ({
+  contentText,
+  includeButton = false,
+}: {
+  contentText: string[];
+  includeButton?: boolean;
+}) => {
   const contentElement = (
     <p
       style={{
@@ -18,7 +24,7 @@ export const MyContent = ({ contentText, includeButton = false }) => {
   );
 
   return (
-    <div>
+    <div my-data-id="my-content">
       {contentElement}
       {includeButton && (
         <button
